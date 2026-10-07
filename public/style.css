@@ -350,6 +350,12 @@ input[type="text"]:focus {
 }
 
 /* ---------- Join screen ---------- */
+.title { display: flex; flex-direction: column; align-items: center; gap: 24px; font-size: inherit; font-weight: inherit; }
+.online {
+  font-family: "Fredoka", "Nunito", sans-serif; font-weight: 700; font-size: 1.7rem;
+  letter-spacing: 0.5em; padding-left: 0.5em; line-height: 1; color: var(--ink);
+  text-shadow: 0 1px 0 var(--hi), 0 3px 0 rgba(0, 0, 0, 0.1);
+}
 #join-screen {
   display: flex; justify-content: center; align-items: center;
   flex: 1; padding: 24px;
@@ -410,9 +416,9 @@ input[type="text"]:focus {
 }
 
 .game-layout {
-  display: flex; gap: 24px; padding: 10px 24px 24px;
-  flex: 1; min-height: 0;
-  width: 100%; max-width: 1280px; margin: 0 auto;
+  display: flex; justify-content: center; gap: 24px; padding: 10px 24px 24px;
+  flex: 1 1 auto; min-height: 0;
+  width: 100%; max-width: 1320px; max-height: 900px; margin: auto;
 }
 
 /* Wooden board frame */
@@ -448,7 +454,7 @@ input[type="text"]:focus {
 /* Side column */
 .side-panel {
   display: flex; flex-direction: column; gap: 20px;
-  flex: 1 1 300px; min-width: 280px; min-height: 0;
+  flex: 1 1 360px; max-width: 460px; min-width: 300px; min-height: 0;
 }
 .controls-section { padding: 18px; flex: none; }
 .chat-section { flex: 1; display: flex; flex-direction: column; padding: 18px; min-height: 0; }
@@ -625,7 +631,7 @@ input[type="text"]:focus {
   body { height: auto; min-height: 100dvh; overflow: auto; }
   #game-screen:not(.hidden) { min-height: 100dvh; }
   .game-header { padding: 14px 16px 4px; padding-right: 100px; }
-  .game-layout { flex-direction: column; padding: 10px 16px 28px; gap: 20px; }
+  .game-layout { flex-direction: column; justify-content: flex-start; max-height: none; margin: 0 auto; padding: 10px 16px 28px; gap: 20px; }
   .board-container { width: 100%; max-width: 640px; height: auto; margin: 0 auto; }
   .side-panel { flex: none; width: 100%; max-width: 640px; margin: 0 auto; min-width: 0; }
   .chat-section { min-height: 320px; }
@@ -640,6 +646,33 @@ input[type="text"]:focus {
   .join-card { padding: 30px 22px 26px; }
   .dice-container { grid-template-columns: 100px 1fr; }
   .dice-tray { height: 100px; }
+}
+
+/* ---------- Short desktop windows: tighten everything so it all fits without scrolling ---------- */
+@media (min-width: 1001px) and (min-aspect-ratio: 11/10) and (max-height: 780px) {
+  .game-header { padding: 8px 24px 0; }
+  .game-layout { padding: 6px 24px 14px; gap: 18px; }
+  .side-panel { gap: 12px; }
+  .controls-section, .chat-section { padding: 12px 14px; }
+  .panel-title { margin-bottom: 6px; }
+  .players-list { gap: 3px; margin-bottom: 10px; }
+  .player-row { padding: 5px 10px; font-size: 0.92rem; }
+  .dice-container { grid-template-columns: 92px 1fr; gap: 12px; }
+  .dice-tray { height: 92px; }
+  .dice { --size: 44px; }
+  .face { padding: 6px; border-radius: 9px; }
+  .pip { width: 7px; height: 7px; }
+  .face-1 .pip { width: 10px; height: 10px; }
+  .dice-shadow { bottom: 18px; width: 44px; }
+  .chat-messages { padding: 8px; margin-bottom: 8px; gap: 5px; }
+  .emoji-bar { margin-bottom: 8px; }
+  .emoji-btn { height: 32px; }
+  input[type="text"] { padding: 10px 14px; }
+  .btn { padding: 10px 18px; }
+  .btn-small { padding: 9px 14px; }
+  .btn-roll { font-size: 1.1rem; }
+  .room-code { font-size: 1.2rem; }
+  .logo-small .tile { width: 30px; height: 30px; font-size: 1rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
