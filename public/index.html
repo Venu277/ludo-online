@@ -1,87 +1,70 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ludo: Dark Mode</title>
-  <link rel="stylesheet" href="/style.css?v=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ludo Online</title>
+    <link rel="stylesheet" href="/style.css?v=2.0">
 </head>
 <body>
-
-  <main id="join-screen" class="screen active animated-bg">
-    <div class="join-container glass-panel">
-      <h1 class="neon-text">LUDO</h1>
-      
-      <div class="input-group">
-        <label for="nameInput" class="sr-only">Your Name</label>
-        <input type="text" id="nameInput" placeholder="Enter your name" required autocomplete="off">
-      </div>
-      
-      <div class="input-group">
-        <label for="roomInput" class="sr-only">Room Code</label>
-        <input type="text" id="roomInput" placeholder="Enter room code" required autocomplete="off">
-      </div>
-      
-      <button id="joinBtn" class="glow-btn" type="button">JOIN GAME</button>
-    </div>
-  </main>
-
-  <main id="game-screen" class="screen hidden">
-    <header class="game-header">
-      <h2 id="roomTitle">Room: Waiting...</h2>
+    
+    <header class="app-header">
+        <h1 id="roomDisplay">Room: <span></span></h1>
+        <button id="themeToggle" class="icon-btn" aria-label="Toggle Theme">☀️</button>
     </header>
 
-    <div class="game-layout">
-      <section class="board-container glass-panel">
-        <canvas id="board" width="600" height="600"></canvas>
-      </section>
+    <!-- Pre-game setup (Hidden when game starts) -->
+    <div id="setupContainer" class="panel setup-panel">
+        <input type="text" id="playerName" placeholder="Your Name">
+        <input type="text" id="roomCode" placeholder="Room Code">
+        <button id="joinBtn" class="primary-btn">JOIN GAME</button>
+    </div>
 
-      <aside class="side-panel">
-        <div class="controls-section glass-panel">
-          <h3>Players</h3>
-          <div id="players" class="players-list"></div>
-          
-          <div class="dice-container">
-            <button id="rollBtn" class="glow-btn" type="button" disabled>ROLL DICE</button>
-            <div class="dice-display">
-              <div id="dice" class="dice">1</div>
+    <!-- Main Game UI (Hidden until joined) -->
+    <main id="gameContainer" class="game-layout" style="display: none;">
+        
+        <!-- Left Side: The Board -->
+        <div class="board-wrapper skeuomorphic-depth">
+            <canvas id="ludoBoard" width="600" height="600"></canvas>
+        </div>
+
+        <!-- Right Side: Controls and Chat -->
+        <aside class="sidebar">
+            
+            <div class="panel control-panel">
+                <div class="section-header">PLAYERS</div>
+                <ul id="playerList" class="player-list"></ul>
+                
+                <button id="rollBtn" class="primary-btn 3d-push">ROLL DICE</button>
+                
+                <div class="dice-display skeuomorphic-inset">
+                    <span id="diceValue">🎲</span>
+                </div>
             </div>
-          </div>
-        </div>
 
-        <div class="chat-section glass-panel">
-          <h3>Chat</h3>
-          <div id="messages" class="chat-messages"></div>
-          
-          <div id="emoji-bar" class="emoji-bar">
-            <button type="button" class="emoji-btn">🎲</button>
-            <button type="button" class="emoji-btn">😂</button>
-            <button type="button" class="emoji-btn">😭</button>
-            <button type="button" class="emoji-btn">😡</button>
-            <button type="button" class="emoji-btn">🎉</button>
-          </div>
+            <div class="panel chat-panel">
+                <div class="section-header">CHAT</div>
+                <div id="chatMessages" class="chat-box skeuomorphic-inset"></div>
+                
+                <div class="chat-input-area">
+                    <div class="quick-emojis">
+                        <button class="emoji-btn">🎲</button>
+                        <button class="emoji-btn">😂</button>
+                        <button class="emoji-btn">😭</button>
+                        <button class="emoji-btn">😡</button>
+                        <button class="emoji-btn">🎉</button>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="chatInput" placeholder="Type message...">
+                        <button id="sendMsgBtn" class="send-btn">Send</button>
+                    </div>
+                </div>
+            </div>
 
-          <div class="chat-inputs">
-            <input type="text" id="chatInput" placeholder="Type message..." autocomplete="off">
-            <button id="sendBtn" type="button">Send</button>
-          </div>
-        </div>
-      </aside>
-    </div>
-  </main>
+        </aside>
+    </main>
 
-  <div id="leaderboard-overlay" class="screen hidden">
-    <div class="leaderboard-card glass-panel">
-      <h2 class="neon-text">GAME OVER</h2>
-      <h3 id="winnerText" style="text-align: center; color: white; margin-bottom: 20px;"></h3>
-      
-      <div id="leaderboard-list" class="leaderboard-list"></div>
-      
-      <button id="leaveRoomBtn" class="glow-btn" style="margin-top: 24px; width: 100%;">Leave Room</button>
-    </div>
-  </div>
-
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="/client.js?v=1.0"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/client.js?v=2.0"></script>
 </body>
 </html>
