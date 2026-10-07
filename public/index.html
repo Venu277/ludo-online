@@ -1,78 +1,163 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ludo Online</title>
-    <!-- Bumping the version number to force browsers to load the new file -->
-    <link rel="stylesheet" href="/style.css?v=2.1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>Ludo Online</title>
+
+  <!-- Apply the saved (or system) theme before first paint so there is no flash -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("ludo-theme");
+        if (!t) t = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css?v=2.0">
 </head>
 <body>
-    
-    <header class="app-header">
-        <h1 id="roomTitle">Room: <span></span></h1>
-        <button id="themeToggle" class="icon-btn" aria-label="Toggle Theme">☀️</button>
+
+  <!-- Light / dark switch -->
+  <button id="themeToggle" class="theme-switch" type="button" role="switch" aria-checked="false" aria-label="Dark mode">
+    <span class="switch-track">
+      <span class="switch-knob">
+        <svg class="icon icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.2" fill="currentColor"/>
+          <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M5.3 18.7L7 17M17 7l1.7-1.7"/>
+          </g>
+        </svg>
+        <svg class="icon icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.6 8.6 0 1 0 11.1 11.1z" fill="currentColor"/>
+        </svg>
+      </span>
+    </span>
+  </button>
+
+  <!-- JOIN SCREEN -->
+  <main id="join-screen" class="screen active">
+    <div class="join-card panel">
+      <div class="logo" role="img" aria-label="Ludo">
+        <span class="tile t-red">L</span>
+        <span class="tile t-blue">U</span>
+        <span class="tile t-yellow">D</span>
+        <span class="tile t-green">O</span>
+      </div>
+      <p class="tagline">Roll. Race. Send your friends home.</p>
+
+      <div class="field">
+        <label for="nameInput">Your name</label>
+        <input type="text" id="nameInput" placeholder="e.g. Venu" required autocomplete="off" maxlength="20">
+      </div>
+
+      <div class="field">
+        <label for="roomInput">Room code</label>
+        <input type="text" id="roomInput" placeholder="e.g. 277" required autocomplete="off" maxlength="12">
+      </div>
+
+      <button id="joinBtn" class="btn btn-primary" type="button">Join game</button>
+    </div>
+  </main>
+
+  <!-- GAME SCREEN -->
+  <main id="game-screen" class="screen hidden">
+    <header class="game-header">
+      <div class="logo logo-small" role="img" aria-label="Ludo">
+        <span class="tile t-red">L</span>
+        <span class="tile t-blue">U</span>
+        <span class="tile t-yellow">D</span>
+        <span class="tile t-green">O</span>
+      </div>
+
+      <button id="roomBadge" class="room-badge" type="button" title="Click to copy the room code">
+        <span class="room-label">Room</span>
+        <span id="roomTitle" class="room-code">-</span>
+        <span id="roomHint" class="room-hint">Copy</span>
+      </button>
     </header>
 
-    <!-- Pre-game setup (ID matched to client.js) -->
-    <div id="join-screen" class="panel setup-panel">
-        <input type="text" id="nameInput" placeholder="Your Name">
-        <input type="text" id="roomInput" placeholder="Room Code">
-        <button id="joinBtn" class="primary-btn">JOIN GAME</button>
-    </div>
+    <div class="game-layout">
+      <section class="board-container">
+        <div class="board-frame">
+          <div class="board-inset">
+            <canvas id="board" width="900" height="900"></canvas>
+          </div>
+        </div>
+      </section>
 
-    <!-- Main Game UI (ID matched to client.js) -->
-    <main id="game-screen" class="game-layout hidden">
-        
-        <!-- Left Side: The Board -->
-        <div class="board-wrapper skeuomorphic-depth">
-            <canvas id="board" width="600" height="600"></canvas>
+      <aside class="side-panel">
+        <div class="controls-section panel">
+          <h3 class="panel-title">Players</h3>
+          <div id="players" class="players-list"></div>
+
+          <div class="dice-container">
+            <div class="dice-tray well">
+              <div class="dice-shadow"></div>
+              <div id="dice" class="dice" role="img" aria-label="Dice shows 1">
+                <div class="cube"></div>
+              </div>
+            </div>
+            <button id="rollBtn" class="btn btn-roll" type="button" disabled>Roll dice</button>
+          </div>
         </div>
 
-        <!-- Right Side: Controls and Chat -->
-        <aside class="sidebar">
-            
-            <div class="panel control-panel">
-                <div class="section-header">PLAYERS</div>
-                <ul id="players" class="player-list"></ul>
-                
-                <button id="rollBtn" class="primary-btn 3d-push">ROLL DICE</button>
-                
-                <div class="dice-display skeuomorphic-inset">
-                    <span id="dice">🎲</span>
-                </div>
-            </div>
+        <div class="chat-section panel">
+          <h3 class="panel-title">Chat</h3>
+          <div id="messages" class="chat-messages well"></div>
 
-            <div class="panel chat-panel">
-                <div class="section-header">CHAT</div>
-                <div id="messages" class="chat-box skeuomorphic-inset"></div>
-                
-                <div class="chat-input-area">
-                    <div class="quick-emojis">
-                        <button class="emoji-btn">🎲</button>
-                        <button class="emoji-btn">😂</button>
-                        <button class="emoji-btn">😭</button>
-                        <button class="emoji-btn">😡</button>
-                        <button class="emoji-btn">🎉</button>
-                    </div>
-                    <div class="input-group">
-                        <input type="text" id="chatInput" placeholder="Type message...">
-                        <button id="sendBtn" class="send-btn">Send</button>
-                    </div>
-                </div>
-            </div>
+          <div id="emoji-bar" class="emoji-bar">
+            <button type="button" class="emoji-btn" aria-label="Dice emoji">🎲</button>
+            <button type="button" class="emoji-btn" aria-label="Laughing emoji">😂</button>
+            <button type="button" class="emoji-btn" aria-label="Crying emoji">😭</button>
+            <button type="button" class="emoji-btn" aria-label="Angry emoji">😡</button>
+            <button type="button" class="emoji-btn" aria-label="Party emoji">🎉</button>
+          </div>
 
-        </aside>
-    </main>
-
-    <!-- Leaderboard Overlay (Added from your client.js requirements) -->
-    <div id="leaderboard-overlay" class="panel skeuomorphic-inset" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 100; width: 90%; max-width: 400px; flex-direction: column; align-items: center; text-align: center;">
-        <h2 id="winnerText" style="margin-bottom: 20px; font-size: 1.5rem;"></h2>
-        <ul id="leaderboard-list" class="player-list" style="margin-bottom: 20px; width: 100%; list-style: none; padding: 0;"></ul>
-        <button id="leaveRoomBtn" class="primary-btn">LEAVE ROOM</button>
+          <div class="chat-inputs">
+            <input type="text" id="chatInput" placeholder="Type a message..." autocomplete="off" maxlength="200">
+            <button id="sendBtn" class="btn btn-small" type="button">Send</button>
+          </div>
+        </div>
+      </aside>
     </div>
+  </main>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/client.js?v=2.1"></script>
+  <!-- GAME OVER -->
+  <div id="leaderboard-overlay" class="screen hidden">
+    <div class="leaderboard-card panel">
+      <div class="trophy" aria-hidden="true">
+        <svg viewBox="0 0 64 64">
+          <defs>
+            <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#fff0b8"/>
+              <stop offset=".5" stop-color="#f1b93c"/>
+              <stop offset="1" stop-color="#b9791a"/>
+            </linearGradient>
+          </defs>
+          <path d="M18 8h28v14a14 14 0 0 1-28 0V8z" fill="url(#gold)"/>
+          <path d="M18 12H8c0 9 4 14 11 15M46 12h10c0 9-4 14-11 15" fill="none" stroke="url(#gold)" stroke-width="4" stroke-linecap="round"/>
+          <rect x="28" y="36" width="8" height="10" fill="url(#gold)"/>
+          <rect x="20" y="46" width="24" height="8" rx="3" fill="url(#gold)"/>
+          <path d="M24 12v10a8 8 0 0 0 4 7" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h2 class="overlay-title">Game over</h2>
+      <h3 id="winnerText" class="winner-text"></h3>
+
+      <div id="leaderboard-list" class="leaderboard-list"></div>
+
+      <button id="leaveRoomBtn" class="btn btn-primary btn-block" type="button">Leave room</button>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/client.js?v=2.0"></script>
 </body>
 </html>
