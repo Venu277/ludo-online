@@ -442,3 +442,25 @@ function drawPawns() {
 
   pawnsToDraw.forEach(p => drawSinglePawn(p.renderX, p.renderY, p.color, cell, false, p.scale));
 }
+// --- THEME TOGGLE LOGIC ---
+const themeToggleBtn = document.getElementById('themeToggle');
+const htmlElement = document.documentElement;
+
+// Check for saved theme preference, default to dark
+const savedTheme = localStorage.getItem('ludoTheme') || 'dark';
+htmlElement.setAttribute('data-theme', savedTheme);
+updateToggleIcon(savedTheme);
+
+themeToggleBtn.addEventListener('click', () => {
+    const currentTheme = htmlElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    htmlElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('ludoTheme', newTheme);
+    updateToggleIcon(newTheme);
+});
+
+function updateToggleIcon(theme) {
+    // Sun icon for dark mode (click to switch to light), Moon for light mode
+    themeToggleBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
+}
