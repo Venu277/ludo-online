@@ -4,28 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ludo Online</title>
-    <link rel="stylesheet" href="/style.css?v=2.0">
+    <!-- Bumping the version number to force browsers to load the new file -->
+    <link rel="stylesheet" href="/style.css?v=2.1">
 </head>
 <body>
     
     <header class="app-header">
-        <h1 id="roomDisplay">Room: <span></span></h1>
+        <h1 id="roomTitle">Room: <span></span></h1>
         <button id="themeToggle" class="icon-btn" aria-label="Toggle Theme">☀️</button>
     </header>
 
-    <!-- Pre-game setup (Hidden when game starts) -->
-    <div id="setupContainer" class="panel setup-panel">
-        <input type="text" id="playerName" placeholder="Your Name">
-        <input type="text" id="roomCode" placeholder="Room Code">
+    <!-- Pre-game setup (ID matched to client.js) -->
+    <div id="join-screen" class="panel setup-panel">
+        <input type="text" id="nameInput" placeholder="Your Name">
+        <input type="text" id="roomInput" placeholder="Room Code">
         <button id="joinBtn" class="primary-btn">JOIN GAME</button>
     </div>
 
-    <!-- Main Game UI (Hidden until joined) -->
-    <main id="gameContainer" class="game-layout" style="display: none;">
+    <!-- Main Game UI (ID matched to client.js) -->
+    <main id="game-screen" class="game-layout" style="display: none;">
         
         <!-- Left Side: The Board -->
         <div class="board-wrapper skeuomorphic-depth">
-            <canvas id="ludoBoard" width="600" height="600"></canvas>
+            <canvas id="board" width="600" height="600"></canvas>
         </div>
 
         <!-- Right Side: Controls and Chat -->
@@ -33,18 +34,18 @@
             
             <div class="panel control-panel">
                 <div class="section-header">PLAYERS</div>
-                <ul id="playerList" class="player-list"></ul>
+                <ul id="players" class="player-list"></ul>
                 
                 <button id="rollBtn" class="primary-btn 3d-push">ROLL DICE</button>
                 
                 <div class="dice-display skeuomorphic-inset">
-                    <span id="diceValue">🎲</span>
+                    <span id="dice">🎲</span>
                 </div>
             </div>
 
             <div class="panel chat-panel">
                 <div class="section-header">CHAT</div>
-                <div id="chatMessages" class="chat-box skeuomorphic-inset"></div>
+                <div id="messages" class="chat-box skeuomorphic-inset"></div>
                 
                 <div class="chat-input-area">
                     <div class="quick-emojis">
@@ -56,7 +57,7 @@
                     </div>
                     <div class="input-group">
                         <input type="text" id="chatInput" placeholder="Type message...">
-                        <button id="sendMsgBtn" class="send-btn">Send</button>
+                        <button id="sendBtn" class="send-btn">Send</button>
                     </div>
                 </div>
             </div>
@@ -64,7 +65,14 @@
         </aside>
     </main>
 
+    <!-- Leaderboard Overlay (Added from your client.js requirements) -->
+    <div id="leaderboard-overlay" class="panel skeuomorphic-inset" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 100; width: 90%; max-width: 400px; flex-direction: column; align-items: center; text-align: center;">
+        <h2 id="winnerText" style="margin-bottom: 20px; font-size: 1.5rem;"></h2>
+        <ul id="leaderboard-list" class="player-list" style="margin-bottom: 20px; width: 100%; list-style: none; padding: 0;"></ul>
+        <button id="leaveRoomBtn" class="primary-btn">LEAVE ROOM</button>
+    </div>
+
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/client.js?v=2.0"></script>
+    <script src="/client.js?v=2.1"></script>
 </body>
 </html>
