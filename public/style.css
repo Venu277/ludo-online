@@ -245,3 +245,13 @@ canvas {
     border-radius: 16px;
     display: block;
 }
+
+/* Fix for JS screen switching */
+.hidden, .hide, .d-none {
+    display: none !important;
+}
+
+/* Ensure the game layout displays as flexbox when active */
+.game-layout:not(.hidden):not(.hide):not([style*="display: none"]) {
+    display: flex !important;
+}
