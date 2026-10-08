@@ -76,15 +76,21 @@ function sanitizeRoomCode(code) { return String(code || "").toUpperCase().trim()
 
 io.on("connection", (socket) => {
   
-  socket.on("join_room", ({ roomCode, name }) => {
+  socket.on("join_room", ({ roomCode, name } = {}) => {
     roomCode = sanitizeRoomCode(roomCode);
-    if (!roomCode) return;
+    const cleanName = String(name || "").trim().substring(0, 20);
+
+    // A player must give BOTH a name and a room code - no defaults, no auto-assigned room.
+    if (!cleanName) return socket.emit("join_error", { message: "Please enter your name." });
+    if (!roomCode) return socket.emit("join_error", { message: "Please enter a room code." });
+
     if (!rooms[roomCode]) rooms[roomCode] = { players: {}, gameState: createInitialGameState() };
 
     const room = rooms[roomCode];
+    if (room.players[socket.id]) return; // already in this room (e.g. double click)
     if (Object.keys(room.players).length >= 4) return socket.emit("room_full");
 
-    const player = { id: socket.id, name: String(name || "Player").substring(0, 20), color: assignColor(room) };
+    const player = { id: socket.id, name: cleanName, color: assignColor(room) };
     room.players[socket.id] = player;
     room.gameState.pawns[socket.id] = [-1, -1, -1, -1];
     room.gameState.finished[socket.id] = 0;
@@ -132,16 +138,17 @@ io.on("connection", (socket) => {
       const rel = (oldPos - START_INDEX[player.color] + 52) % 52, progress = rel + dice;
       if (progress < 51) newPos = (START_INDEX[player.color] + progress) % 52;
       else {
+        // homeStep 0-4 = the five coloured home squares, homeStep 5 = the winning square (centre)
         const homeStep = progress - 51;
-        if (homeStep < 6) newPos = 52 + homeStep;
-        else if (homeStep === 6) { newPos = 100 + room.gameState.finished[socket.id]; finishedNow = true; } 
+        if (homeStep < 5) newPos = 52 + homeStep;
+        else if (homeStep === 5) { newPos = 100 + room.gameState.finished[socket.id]; finishedNow = true; } 
         else return socket.emit("exact_roll_required");
       }
     } 
-    else if (oldPos >= 52 && oldPos < 58) {
+    else if (oldPos >= 52 && oldPos < 57) {
       const homeStep = oldPos - 52 + dice;
-      if (homeStep < 6) newPos = 52 + homeStep;
-      else if (homeStep === 6) { newPos = 100 + room.gameState.finished[socket.id]; finishedNow = true; } 
+      if (homeStep < 5) newPos = 52 + homeStep;
+      else if (homeStep === 5) { newPos = 100 + room.gameState.finished[socket.id]; finishedNow = true; } 
       else return socket.emit("exact_roll_required");
     } 
     else return;
