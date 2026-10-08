@@ -8,6 +8,8 @@ const gameScreen = document.getElementById("game-screen");
 const nameInput = document.getElementById("nameInput");
 const roomInput = document.getElementById("roomInput");
 const joinBtn = document.getElementById("joinBtn");
+const joinError = document.getElementById("joinError");
+const joinCard = document.querySelector(".join-card");
 const roomTitle = document.getElementById("roomTitle");
 const roomBadge = document.getElementById("roomBadge");
 const roomHint = document.getElementById("roomHint");
@@ -141,12 +143,32 @@ window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e)
 // ============================================================================
 document.body.addEventListener("click", () => { if (audioCtx.state === 'suspended') audioCtx.resume(); }, { once: true });
 
+function showJoinError(message, field) {
+  joinError.textContent = message;
+  joinError.hidden = false;
+  [nameInput, roomInput].forEach(el => el.removeAttribute("aria-invalid"));
+  if (field) { field.setAttribute("aria-invalid", "true"); field.focus(); }
+  joinCard.classList.remove("shake"); void joinCard.offsetWidth; joinCard.classList.add("shake");
+}
+function clearJoinError() {
+  joinError.hidden = true; joinError.textContent = "";
+  [nameInput, roomInput].forEach(el => el.removeAttribute("aria-invalid"));
+}
+
 joinBtn.addEventListener("click", () => {
-  const name = nameInput.value.trim() || "Player";
-  const roomCode = roomInput.value.trim() || "LUDO1";
+  const name = nameInput.value.trim();
+  const roomCode = roomInput.value.trim();
+
+  // Both fields are required - no default name, no default room.
+  if (!name && !roomCode) return showJoinError("Enter your name and room code.", nameInput);
+  if (!name) return showJoinError("Please enter your name.", nameInput);
+  if (!roomCode) return showJoinError("Please enter a room code.", roomInput);
+
+  clearJoinError();
   currentRoom = roomCode.toUpperCase();
   socket.emit("join_room", { roomCode: currentRoom, name });
 });
+[nameInput, roomInput].forEach(el => el.addEventListener("input", clearJoinError));
 [nameInput, roomInput].forEach(el => el.addEventListener("keydown", (e) => { if (e.key === "Enter") joinBtn.click(); }));
 
 rollBtn.addEventListener("click", () => { if (currentRoom) socket.emit("roll_dice", { roomCode: currentRoom }); });
@@ -228,6 +250,9 @@ socket.on("room_state", (state) => {
   }
   applyRoomState(state);
 });
+
+socket.on("join_error", ({ message }) => showJoinError(message || "Could not join the room."));
+socket.on("room_full", () => showJoinError("That room is full (4 players max).", roomInput));
 
 socket.on("player_joined", ({ player }) => addMessage(`System: ${player.name} joined`, "system"));
 socket.on("player_left", ({ name }) => addMessage(`System: ${name} left`, "system"));
@@ -347,9 +372,9 @@ function canMovePawn(pos, dice, color) {
   if (pos === -1) return dice === 6;
   if (pos >= 0 && pos < 52) {
     const rel = (pos - START_INDEX[color] + 52) % 52;
-    return rel + dice < 51 || rel + dice - 51 <= 6;
+    return rel + dice < 51 || rel + dice - 51 <= 5; // 5 = the winning square
   }
-  if (pos >= 52 && pos < 58) return pos - 52 + dice <= 6;
+  if (pos >= 52 && pos < 57) return pos - 52 + dice <= 5;
   return false;
 }
 function hasAnyValidMove(pawns, dice, color) {
