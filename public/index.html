@@ -20,7 +20,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/style.css?v=2.0">
+  <link rel="stylesheet" href="/style.css?v=2.1">
 </head>
 <body>
 
@@ -62,8 +62,10 @@
 
       <div class="field">
         <label for="roomInput">Room code</label>
-        <input type="text" id="roomInput" placeholder="e.g. 277" required autocomplete="off" maxlength="12">
+        <input type="text" id="roomInput" placeholder="e.g. 277" required autocomplete="off" maxlength="10">
       </div>
+
+      <p id="joinError" class="join-error" role="alert" hidden></p>
 
       <button id="joinBtn" class="btn btn-primary" type="button">Enter room</button>
     </div>
@@ -161,6 +163,6 @@
   </div>
 
   <script src="/socket.io/socket.io.js"></script>
-  <script src="/client.js?v=2.0"></script>
+  <script src="/client.js?v=2.1"></script>
 </body>
 </html>
