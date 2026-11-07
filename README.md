@@ -1,6 +1,6 @@
 # Ludo Online
 
-A real-time multiplayer Ludo game for up to four players. Create or join a room with a code, roll the dice, and race your pawns to the centre. Built with Node.js, Socket.io and plain HTML, CSS and JavaScript, with a skeuomorphic board-game look and a light and dark theme
+A real-time multiplayer Ludo game for up to four players. Create or join a room with a code, roll the dice, and race your pawns to the centre. Built with Node.js, Socket.io and plain HTML, CSS and JavaScript, with a skeuomorphic board-game look and a light and dark theme.
 
 ### Live Demo
 **[Play the Game Live Here]( https://ludos-online.onrender.com )** 
