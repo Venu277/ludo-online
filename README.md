@@ -9,7 +9,7 @@ A real-time multiplayer Ludo game for up to four players. Create or join a room 
 ## Features
 
 - **Real-time multiplayer:** Up to 4 players per room, synced over WebSockets (Socket.io).
-- **Room codes:** Enter your name and a room code to join. Both are required. Codes are not case-sensitive.
+- **Room codes:** Enter your name and a room code to join. Both are required. Codes are not case-sensitive .
 - **Light and dark mode:** A switch on every screen. It follows your system setting until you pick one, then remembers your choice.
 - **Skeuomorphic design:** A wooden board frame, raised and pressed-in components, and a 3D dice.
 - **Clear move highlights:** When it's your turn, the pawns you can legally move get a glowing ring.
